@@ -1,0 +1,142 @@
+/* kboPage.css */
+
+/* 페이지 전체를 감싸는 컨테이너 */
+.about-container {
+  max-width: 960px; /* 페이지의 최대 너비를 설정해서 너무 넓어지지 않게 해줘 */
+  margin: 40px auto; /* 위아래 40px, 좌우 자동으로 중앙에 배치 */
+  padding: 30px; /* 안쪽 여백 */
+  background-color: #fbfbfb; /* 아주 연한 배경색 */
+  border-radius: 12px; /* 모서리를 둥글게 */
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08); /* 부드러운 그림자 효과 */
+  font-family: 'Spoqa Han Sans Neo', 'Apple SD Gothic Neo', sans-serif; /* 예쁜 글꼴 설정 */
+}
+
+/* 페이지 제목 (KBO) */
+.about-container h1 {
+  text-align: center; /* 가운데 정렬 */
+  color: #2c3e50; /* 진한 파란색 계열 글씨색 */
+  margin-bottom: 40px; /* 아래 여백 */
+  font-size: 2.8em; /* 글씨 크기 크게 */
+  letter-spacing: 1.5px; /* 글자 간격 살짝 넓게 */
+  font-weight: 700; /* 글씨 두께 */
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.05); /* 은은한 글씨 그림자 */
+}
+
+/* 선수 기록 및 버튼을 담는 전체 컨테이너 */
+.player-record-container {
+  display: flex; /* 내부 요소들을 유연하게 정렬 */
+  flex-direction: column; /* 세로 방향으로 쌓이도록 */
+  gap: 30px; /* 요소들 사이의 간격 */
+}
+
+/* 메인 탭 버튼들 (팀 순위, 선수 기록) */
+.record-buttons {
+  display: flex; /* 버튼들을 가로로 정렬 */
+  justify-content: center; /* 버튼들을 가운데로 모아줘 */
+  gap: 20px; /* 버튼들 사이의 간격 */
+  margin-bottom: 25px; /* 버튼들 아래 여백 */
+}
+
+.record-buttons .team-record {
+  background-color: #3498db; /* 시원한 파란색 배경 */
+  color: white; /* 글씨색은 흰색 */
+  border: none; /* 테두리 없음 */
+  padding: 14px 30px; /* 버튼 안쪽 여백 */
+  border-radius: 8px; /* 모서리를 둥글게 */
+  cursor: pointer; /* 마우스 오버 시 손가락 모양으로 변경 */
+  font-size: 1.2em; /* 글씨 크기 */
+  font-weight: bold; /* 글씨 두께 */
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* 부드러운 전환 효과 */
+  min-width: 160px; /* 버튼의 최소 너비를 설정 (선수 기록이 길어졌으니까) */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 버튼 그림자 */
+}
+
+.record-buttons .team-record:hover {
+  background-color: #2980b9; /* 마우스 오버 시 살짝 어두운 파란색 */
+  transform: translateY(-3px); /* 버튼이 살짝 위로 올라가는 효과 */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* 그림자 진하게 */
+}
+
+.record-buttons .team-record:active {
+  background-color: #1a5276; /* 클릭 시 더 어두운 파란색 */
+  transform: translateY(0); /* 다시 원래 위치로 */
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 그림자 약하게 */
+}
+
+/* 팀, 타자/투수 정보가 표시되는 영역의 기본 스타일 */
+.team-info,
+.hitter-info { /* 이제 hitter-info가 타자와 투수 정보를 모두 담당해 */
+  background-color: #ffffff; /* 흰색 배경 */
+  padding: 30px; /* 안쪽 여백 */
+  border-radius: 10px; /* 모서리를 둥글게 */
+  border: 1px solid #e9ecef; /* 아주 얇은 테두리 */
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.06); /* 부드러운 그림자 */
+  line-height: 1.7; /* 줄 간격 */
+  color: #333; /* 글씨색 */
+  font-size: 1.1em; /* 글씨 크기 */
+  min-height: 120px; /* 내용이 적어도 최소 높이를 유지 */
+  display: flex; /* 내부 요소들을 유연하게 정렬 */
+  flex-direction: column; /* 세로로 쌓이도록 */
+  gap: 12px; /* 정보 라인 사이 간격 */
+}
+
+/* 팀 순위 각 정보 라인 */
+.team-info p {
+  margin: 0; /* 기본 여백 제거 */
+  padding-bottom: 8px; /* 아래쪽 여백 */
+  border-bottom: 1px dashed #e0e0e0; /* 점선으로 구분 */
+}
+.team-info p:last-child { /* 마지막 정보 라인에는 테두리 없음 */
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+
+/* 타자/투수 선택 버튼들 ('타자', '투수' 버튼) */
+.hitter-buttons {
+  display: flex; /* 버튼들을 가로로 정렬 */
+  justify-content: center; /* 가운데 정렬 */
+  gap: 15px; /* 버튼들 사이 간격 */
+  margin-bottom: 20px; /* 아래 여백 */
+}
+
+.hitter-btn {
+  background-color: #2ecc71; /* 상큼한 녹색 배경 */
+  color: white; /* 흰색 글씨 */
+  border: none; /* 테두리 없음 */
+  padding: 10px 22px; /* 안쪽 여백 */
+  border-radius: 25px; /* 아주 둥글게 */
+  cursor: pointer; /* 마우스 오버 시 손가락 모양 */
+  font-size: 1.05em; /* 글씨 크기 */
+  font-weight: 500; /* 글씨 두께 */
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease; /* 부드러운 전환 효과 */
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1); /* 버튼 그림자 */
+  min-width: 90px; /* 버튼 최소 너비 */
+}
+
+.hitter-btn:hover {
+  background-color: #27ae60; /* 마우스 오버 시 살짝 어두운 녹색 */
+  transform: translateY(-2px); /* 버튼이 살짝 위로 올라가는 효과 */
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15); /* 그림자 진하게 */
+}
+
+.hitter-btn:active {
+  background-color: #1e8449; /* 클릭 시 더 어두운 녹색 */
+  transform: translateY(0); /* 다시 원래 위치로 */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08); /* 그림자 약하게 */
+}
+
+/* 타자/투수 상세 정보 텍스트 (줄바꿈이 많은 경우) */
+.hitter-info p {
+  white-space: pre-wrap; /* 공백과 줄바꿈을 유지하면서 자동 줄바꿈 허용 */
+  font-family: 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', monospace; /* 고정폭 글꼴로 표처럼 보이게 */
+  font-size: 0.95em; /* 글씨 크기를 살짝 줄여서 한눈에 들어오게 */
+  line-height: 1.4; /* 줄 간격 조절 */
+  padding: 0; /* 내부 여백 없음 */
+  margin: 0; /* 외부 여백 없음 */
+}
+
+/* 스크롤바가 필요하면 */
+.hitter-info {
+  overflow-x: auto; /* 내용이 넘치면 가로 스크롤바 생성 */
+}
