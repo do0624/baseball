@@ -1,0 +1,95 @@
+/* Scoreboard.css */
+.scoreboard {
+    
+    color: rgb(0, 0, 0);
+    padding: 20px;
+    border-radius: 1px;
+    width: 400px;
+    margin: 20px auto;
+    font-family: 'Courier New', monospace;
+    text-align: center;
+ 
+  }
+  
+  .line {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0;
+    font-size: 50px;
+  }
+  
+  .dot {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    margin: 0 5px;
+    border-radius: 50%;
+    background-color: #ffffff;
+    border: 1px solid #ffffff;
+  }
+  
+  .dot.on {
+    background-color: rgb(255, 0, 0);
+    box-shadow: 0 0 5px rgb(255, 0, 0);
+  }
+  
+  .buttons button {
+    margin: 1px;
+    padding: 8px 12px;
+    background: #222;
+    color: #0f0;
+    border: 1px solid #0f0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s;
+  }
+  
+  .buttons button:hover {
+    background: #0f0;
+    color: #000;
+  }
+  
+  .dot {
+    display: inline-block;
+    width: 50px;
+    height: 50px;
+    margin: 0 30px;
+    border-radius: 100%;
+    background-color: gray;
+  }
+  
+  .dot.on {
+    background-color: red;
+  }
+  
+ 
+  
+  .line {
+    margin-bottom: 1px;
+  }
+  
+  .inning-scoreboard {
+    margin-top: 2px;
+  }
+  
+  .inning-scoreboard table {
+    border-collapse: collapse;
+    color: rgb(0, 0, 0);
+  }
+  
+  .inning-scoreboard th,
+  .inning-scoreboard td {
+    border: 1px solid #000000;
+    padding: 4px 12px;
+    text-align: center;
+  }
+  .my-team {
+    color: blue; /* 내 팀 글씨 파란색 */
+    font-weight: bold;
+  }
+  
+  .opponent-team {
+    color: red; /* 상대 팀 글씨 빨간색 */
+    font-weight: bold;
+  }
