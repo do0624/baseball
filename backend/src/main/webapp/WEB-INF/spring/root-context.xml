@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mybatis-spring="http://mybatis.org/schema/mybatis-spring"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://mybatis.org/schema/mybatis-spring http://mybatis.org/schema/mybatis-spring-1.2.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<!-- 내가 추가한거 -->
+	<!-- 커넥션 풀 - 아파치 - Commons DBCP 2.8.0 -->
+	
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp2.BasicDataSource"
+		destroy-method="close">
+		<!-- dataSource 빈은 DB 연결에 사용될 객체 -->
+			
+		<!-- log4jdbc.log4j2 때문에 기존 코드 주석친거 -->
+		<!-- <property name="driverClassName" value="com.mysql.cj.jdbc.Driver" /> --> 
+		<property name="driverClassName" value="net.sf.log4jdbc.sql.jdbcapi.DriverSpy" />
+		 
+		<!-- <property name="url" value="jdbc:mysql://localhost:3306/my_cat" /> -->
+		<property name="url" value="jdbc:log4jdbc:mysql://localhost:3306/my_cat" />
+		<!-- db포트, db명에 맞게 수정 --> 
+		<!-- log4jdbc.log4j2로 바꾸기 위해 .property 파일을 추가하고 driverClassName과 url을 변경 -->
+		
+		<property name="username" value="root" /><!-- db 계정에 맞게 수정 -->
+		<property name="password" value="root" /><!-- db 계정에 맞게 수정 -->
+	</bean>
+	<!-- MySQL 드라이버, 주소, 계정 정보를 설정 -> DB 연결을 위한 DataSource 설정 과정이다. -->
+
+	<!-- 내가 추가한거 -->
+	<!-- SQLSessionFactiory -->
+	<bean id="sqlSessionFactory"
+		class="org.mybatis.spring.SqlSessionFactoryBean">
+		<!-- MyBatis에서 SQL 세션을 생성하기 위한 핵심 객체인 SqlSessionFactory를 설정 -->
+		<property name="dataSource" ref="dataSource"></property>
+	</bean>
+	<!-- MyBatis SQLSessionFactory 설정 : 위에서 설정한 dataSource를 참조해서 DB 연결을 이어받는다. -->
+
+
+	<!-- 내가 추가한거 -->
+	<!-- mybatis - mapper 설정 -->
+	<mybatis-spring:scan base-package="com.peisia.mapper, com.baseball.ranking.mapper, com.baseball.game.mapper" />
+		
+
+	<!-- 내가 추가한거 -->
+	<!-- <context:component-scan base-package="org.zerock.sample"> </context:component-scan> -->
+	
+		
+	<!-- 내가 추가한거 -->
+
+	
+
+</beans>
+
+<!-- 애플리케이션 공통 비즈니스 로직을 관리 -->

@@ -1,0 +1,269 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.peisia</groupId>
+	<artifactId>spring</artifactId>
+	<name>Spring_Test2</name>
+	<packaging>war</packaging>
+	<version>1.0.0-BUILD-SNAPSHOT</version>
+	<properties>
+		<!-- <java-version>1.6</java-version> -->
+		<java-version>11</java-version><!-- 내가 버전수정(1/7) java version 변경-->
+		<!-- <org.springframework-version>3.1.1.RELEASE</org.springframework-version> -->
+		<org.springframework-version>5.0.7.RELEASE</org.springframework-version><!-- 내가 버전수정(2/7) spring version 변경-->
+		<org.aspectj-version>1.6.10</org.aspectj-version>
+		<org.slf4j-version>1.6.6</org.slf4j-version>
+	</properties>
+	<dependencies>
+		<!-- Spring -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<version>${org.springframework-version}</version>
+			<exclusions>
+				<!-- Exclude Commons Logging in favor of SLF4j -->
+				<exclusion>
+					<groupId>commons-logging</groupId>
+					<artifactId>commons-logging</artifactId>
+				 </exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-webmvc</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+				
+		<!-- AspectJ -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>${org.aspectj-version}</version>
+		</dependency>	
+		
+		<!-- Logging -->
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-api</artifactId>
+			<version>${org.slf4j-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<version>${org.slf4j-version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-log4j12</artifactId>
+			<version>${org.slf4j-version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<!-- <version>1.2.15</version> -->
+			<version>1.2.17</version><!-- 내가 버전수정(7/7) -->
+			<exclusions>
+				<exclusion>
+					<groupId>javax.mail</groupId>
+					<artifactId>mail</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.jms</groupId>
+					<artifactId>jms</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jdmk</groupId>
+					<artifactId>jmxtools</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.sun.jmx</groupId>
+					<artifactId>jmxri</artifactId>
+				</exclusion>
+			</exclusions>
+			<!-- <scope>runtime</scope> : default code 였음.-->
+			<scope>compile</scope> <!-- 이 scope 부분을 삭제하면 default 값이 compile임. -->
+		</dependency>
+
+		<!-- @Inject -->
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
+		</dependency>
+				
+		<!-- Servlet -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<!-- <artifactId>servlet-api</artifactId> -->
+			<artifactId>javax.servlet-api</artifactId><!-- 내가 버전수정(6-1/7) servlet version 변경 -->
+			<!-- <version>2.5</version> -->
+			<version>3.1.0</version><!-- 내가 버전수정(6-2/7) servlet version 변경-->
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>jsp-api</artifactId>
+			<version>2.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+	
+		<!-- Test -->
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<!-- <version>4.7</version> -->
+			<version>4.12</version><!-- 내가 버전수정(5/7) jUnit version 변경-->
+			<!-- jUnit(Java Unit Test) : 자바 프로그램의 기능이 제대로 작동하는지 자동으로 테스트할 수 있게 해주는 도구 -->
+			<scope>test</scope>
+		</dependency>
+				<!-- ////////////////// 내가 추가 (시작) ////////////////////// -->
+		<!-- 내가 추가(1/8) -->	
+		<!-- spring-tx : Spring Framework의 transaction 관련 기능을 사용하는 데 필요한 라이브러리.
+						 트랜잭션 추상화(Transaction Abstraction)**를 제공하는 모듈.
+						 DB와의 작업에서 중요한 "트랜잭션 처리"를 코드에 선언적(@Transactional) 또는 프로그래밍 방식으로 적용할 수 있게 도와준다. -->	
+		<dependency>	
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-tx</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		
+		<!-- 내가 추가(2/8) -->	
+		<!-- spring-jdbc : Java의 기본 JDBC API는 많은 반복적인 코드(Connection, Statement, 예외 처리 등)를 요구하는데 
+						   spring-jdbc는 이를 간단하고 안전하게 처리할 수 있도록 도와준다. -->	
+		<dependency>	
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-jdbc</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		
+		<!-- 내가 추가(3/8) --> 
+		<!-- spring-test : Spring 애플리케이션의 Unit Test, Integration Test 등을 
+						   쉽게 작성할 수 있도록 지원하는 기능을 제공. / 
+						   JUnit이나 TestNG 기반으로 작성된 test code에서 spring context와 
+						   통합된 환경에서 테스트할 수 있도록 도와주는 핵심 도구. -->	
+		<dependency>	
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>${org.springframework-version}</version>
+		</dependency>
+		
+		<!-- 내가 추가(4/8) -->
+		<!-- 커넥션 풀 - 아파치 - Commons DBCP 2.8.0 : DB Connection Pool을 관리하기 위한 라이브러리. -->
+		<!-- DBCP(Database Connection Pool) : DB 연결을 미리 생성해 pool에 보관하고, application이 필요할 때마다 재사용하도록 하여 성능을 높이는 기법 -->
+		<dependency>	
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-dbcp2</artifactId>
+			<version>2.8.0</version>
+		</dependency>
+		
+		<!-- 내가 추가(5/8) -->
+		<!-- mybatis : 자바 개발자들이 데이터베이스를 쉽게 다룰 수 있도록 도와주는 
+					   오픈 소스 ORM(Object-Relational Mapping) framework.
+ -->	
+		<dependency>	
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis</artifactId>
+			<version>3.4.6</version>
+		</dependency>
+		
+		<!-- 내가 추가(6/8) -->	
+		<!-- mybatis - spring -->	
+		<dependency>	
+			<groupId>org.mybatis</groupId>
+			<artifactId>mybatis-spring</artifactId>
+			<version>1.3.2</version>
+		</dependency>
+		
+		<!-- 내가 추가(7/8) -->	
+		<!-- log4jdbc-log4j2 : JDBC 쿼리를 로그로 출력해주는 도구. DB 쿼리 모니터링 및 디버깅을 할 때 매우 유용.
+							   애플리케이션에서 실행되는 SQL 쿼리, 파라미터, 실행 시간 등을 로그에 출력.-->	
+		<dependency>	
+			<groupId>org.bgee.log4jdbc-log4j2</groupId>
+			<artifactId>log4jdbc-log4j2-jdbc4</artifactId>
+			<version>1.16</version>
+		</dependency>
+		
+		<!-- 내가 추가(8/8) -->
+		<!-- 롬복 : 반복적인 보일러플레이트 코드(예: getter, setter, 생성자 등)를 자동으로 생성. -->		
+		<dependency>		
+			<groupId>org.projectlombok</groupId>	
+			<artifactId>lombok</artifactId>	
+			<version>1.18.0</version>	
+			<scope>provided</scope>	
+		</dependency>
+		<!-- ////////////////// 내가 추가 (끝) ////////////////////// -->        
+		
+		<!-- Redis 의존성 추가 -->
+		<dependency>
+		    <groupId>org.springframework.data</groupId>
+		    <artifactId>spring-data-redis</artifactId>
+		    <version>2.0.9.RELEASE</version> <!-- Spring 5.0.7.RELEASE와 호환 -->
+		</dependency>
+		
+		<!-- Lettuce 클라이언트 (비동기, 기본 선택) -->
+		<dependency>
+		    <groupId>io.lettuce</groupId>
+		    <artifactId>lettuce-core</artifactId>
+		    <version>5.0.5.RELEASE</version>
+		</dependency>
+		
+		<!-- Jackson (Redis 직렬화에 필요) -->
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.9.6</version>
+		</dependency>
+		
+	</dependencies>
+	
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-eclipse-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <additionalProjectnatures>
+                        <projectnature>org.springframework.ide.eclipse.core.springnature</projectnature>
+                    </additionalProjectnatures>
+                    <additionalBuildcommands>
+                        <buildcommand>org.springframework.ide.eclipse.core.springbuilder</buildcommand>
+                    </additionalBuildcommands>
+                    <downloadSources>true</downloadSources>
+                    <downloadJavadocs>true</downloadJavadocs>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>2.5.1</version>
+                <configuration>
+                    <!-- <source>1.6</source> -->
+                    <!-- <target>1.6</target> -->
+                    <source>11</source><!-- 내가 버전수정(3/7) -->
+					<target>11</target><!-- 내가 버전수정(4/7) -->
+					<!-- maven-compiler-plugin : Maven에서 Java 소스 코드를 컴파일할 때 사용하는 플러그인. 이것을 변경 -->
+					<!-- 쉽게 말해서, Java 파일(.java)을 .class 파일로 변환해 주는 도구 -->
+                    <compilerArgument>-Xlint:all</compilerArgument>
+                    <showWarnings>true</showWarnings>
+                    <showDeprecation>true</showDeprecation>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>1.2.1</version>
+                <configuration>
+                    <mainClass>org.test.int1.Main</mainClass>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+</project>
