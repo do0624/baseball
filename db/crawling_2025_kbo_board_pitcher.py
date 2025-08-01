@@ -1,12 +1,14 @@
+# Selenium : Web Browser를 자동화하는 도구. Crawling을 위해서 필요.
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.support.ui import Select, WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.by import By
-from selenium.common.exceptions import StaleElementReferenceException, TimeoutException # 필요한 예외 클래스 임포트
 from selenium.webdriver.chrome.options import Options
-import time # 혹시 로딩 지연에 대비
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
+# BeautifulSoup : HTML 문서를 parsing해서 원하는 정보를 쉽게 추출할 수 있는 library.
 from bs4 import BeautifulSoup
+# pandas : 데이터 분석 library. Crawling한 데이터를 표 형태로 저장하고, .csv 파일로 저장하거나 분석할 수 있다.
 import pandas as pd
 
 # Todo(게시판 투수 기록 크롤링)
@@ -30,11 +32,9 @@ import pandas as pd
 
 # --- 설정 ---
 URL1 = "https://www.koreabaseball.com/Record/Player/PitcherBasic/Basic1.aspx?sort=ERA_RT"
-# URL2는 사용하지 않으므로 주석 처리하거나 제거합니다.
-# URL2 = "https://www.koreabaseball.com/Record/Player/PitcherBasic/Basic2.aspx?sort=ERA_RT"
 CHROME_DRIVER_PATH = './chromedriver.exe' # chromedriver.exe 파일 경로
 
-# 팀 정보: {팀명(소문자): 팀 코드}
+# 팀 정보: {팀명(소문자): 팀 코드}. Dictionary이다.
 teams = {
     'doosan': 'OB',
     'hanhwa': 'HH',
@@ -48,35 +48,52 @@ teams = {
     'kiwoom': 'WO'
 }
 
+# URL에서 crawling한 선수 데이터를 넣을 list.
 player_data1 = []
 
-# --- 드라이버 초기화 (반복문 밖으로 이동하여 한 번만 초기화) ---
+# Service 객체 : Chrome driver를 실행하고, 그 실행 상태를 관리.
 service = Service(CHROME_DRIVER_PATH)
+# Options : Chrome driver 실행 옵션을 설정.
 options = Options()
+# Browser 창을 띄우지 않고 background에서 실행
 options.add_argument("--headless")
+# GPU 가속 기능을 끈다.
 options.add_argument("--disable-gpu")
+# 브라우저 창 크기를 가로 1920, 세로 1080 픽셀로 설정
 options.add_argument("--window-size=1920x1080")
+# 위에서 설정한 service와 options를 기반으로 Chrome browser를 실행
 driver = webdriver.Chrome(service=service, options=options)
+# 특정 요소가 나타날 때까지 최대 20초 동안 기다리는 설정
 wait = WebDriverWait(driver, 20)
 print("브라우저 및 WebDriver 초기화 완료.")
 
-try: # 전체 크롤링 작업을 하나의 큰 try 블록으로 묶어 에러 발생 시에도 드라이버 종료 보장
+try: 
     # ==================== URL1 (PitcherBasic/Basic1.aspx) 데이터 수집 ====================
     print("\n========== Basic1 (투수) 데이터 수집 시작 ==========")
+
+
     for team_name, team_code in teams.items():
         print(f"\n==================== {team_name.upper()} 팀 Basic1 (투수) 데이터 수집 중 ====================")
 
+        # teams dictionary에서 key, value를 가져와 그것들을 기준으로 반복문을 돌림.
         try:
-            # 각 팀별로 URL1을 다시 로드하여 페이지 상태를 초기화합니다.
+            # URL1에 접속한다.
             driver.get(URL1)
+            print("페이지 접속 완료")
+
+            # CSS selector를 이용해 찾고자 하는 table의 위치를 지정
             table_locator = (By.CSS_SELECTOR, "table.tData01.tt")
+            # table_locator가 Web page에 나타날 때까지 (최대 20초) 기다린다.
             wait.until(EC.presence_of_element_located(table_locator))
             print("Basic1 페이지 접속 완료")
 
             # 연도 선택
+            # Dropdown(select tag)가 나타날 때까지 기다린다. ID는 연도를 고르는 select 요소의 ID.
             year_select_element = wait.until(EC.presence_of_element_located((By.ID, "cphContents_cphContents_cphContents_ddlSeason_ddlSeason")))
+            # Selenium의 Select class를 사용해서 Dropdown 메뉴를 제어할 수 있게 변환한다.
             year_select = Select(year_select_element)
 
+            # 현재 선택된 연도 확인
             current_selected_year = year_select.first_selected_option.get_attribute("value")
 
             if current_selected_year == "2025":
@@ -101,46 +118,50 @@ try: # 전체 크롤링 작업을 하나의 큰 try 블록으로 묶어 에러 �
             print("연도 선택 프로세스 완료.")
 
             # 팀 선택
+            # Dropdown(select tag)가 나타날 때까지 기다린다. ID는 team을 고르는 select 요소의 ID.
             team_select_element = wait.until(EC.presence_of_element_located((By.ID, "cphContents_cphContents_cphContents_ddlTeam_ddlTeam")))
+            # Selenium의 Select class를 사용해서 Dropdown 메뉴를 제어할 수 있게 변환한다.
             team_select = Select(team_select_element)
+            # 팀 선택 전의 table 요소를 저장. 기다렸다가 찾기.
             table_before_change = wait.until(EC.presence_of_element_located(table_locator))
+            # Dropdown에서 value=team_code인 항목을 선택
             team_select.select_by_value(team_code)
             print(f"팀 선택: {team_name.upper()} ({team_code})")
+            # 기존의 table 요소가 사라질 때까지 대기한다.
             wait.until(EC.staleness_of(table_before_change))
-            
-            # 테이블 데이터가 로드될 때까지 기다립니다.
-            # 첫 번째 실제 데이터 행의 선수 이름 셀을 기다립니다.
-            first_player_name_locator = (By.CSS_SELECTOR, "table.tData01.tt tbody tr:nth-child(1) td:nth-child(2) a")
-            try:
-                wait.until(EC.visibility_of_element_located(first_player_name_locator))
-                print("최종 테이블 로딩 완료 (Basic1 - 데이터 로딩 확인)")
-            except TimeoutException:
-                print(f"경고: {team_name.upper()} 팀 Basic1에 2025년 투수 데이터가 없거나 로딩 지연.")
-                continue # 데이터가 없으면 다음 팀으로 넘어갑니다.
+            # 새로 로딩된 table이 다시 나타날 때까지 기다린다.
+            wait.until(EC.presence_of_element_located(table_locator))
+            print("최종 테이블 로딩 완료 (Basic1 - 데이터 로딩 확인)")
 
             # 데이터 추출
+            # 현재 page의 전체 HTML source code를 문자열로 가져온다.
             html = driver.page_source
+            # html.parser를 이용해 HTML을 parsing할 수 있는 BeautifulSoup 객체를 생성.
             soup = BeautifulSoup(html, 'html.parser')
+            # 클래스명이 "tData01 tt"인 <table> 요소를 찾는다.
             table = soup.find('table', {'class': 'tData01 tt'})
+            # table의 <tbody> tag를 가져온다.
             table_body = table.find('tbody')
+            # <tbody> 내부의 모든 <tr> 요소들을 list로 가져온다.
             rows = table_body.find_all('tr')
 
+           # table_body.find_all('tr')로 가져온 각 행(<tr>)을 하나씩 순회한다,
             for row in rows:
+                # 행 안의 모든 <td>를 리스트로 추출한다.
                 cols = row.find_all('td')
-                if len(cols) < 19:
+
+                # Basic1.aspx의 경우 19개 컬럼 예상 (0부터 시작)
+                if len(cols) < 19: 
                     continue
 
                 rank_text = cols[0].get_text(strip=True)
-                if not rank_text.isdigit():
+                # isdigit()으로 숫자인지 확인한다. 숫자가 아니면 데이터 행이 아니므로 건너뛴다.
+                if not rank_text.isdigit(): 
                     continue
 
-                player_name_tag = cols[1].find('a')
-                player_name = player_name_tag.get_text(strip=True) if player_name_tag else ''
-                player_team = cols[2].get_text(strip=True)
-
                 data = {
-                    'Player_Name': player_name, # 선수 이름
-                    'Player_Team': player_team, # 선수 팀 이름
+                    'Player_Name': cols[1].get_text(strip=True), # 선수 이름
+                    'Player_Team': cols[2].get_text(strip=True), # 선수 팀 이름
                     'Earned_Run_Average': cols[3].get_text(strip=True), # 평균자책점
                     'Game_Num': cols[4].get_text(strip=True), # 경기 수
                     'Win': cols[5].get_text(strip=True), # 승
@@ -156,6 +177,7 @@ try: # 전체 크롤링 작업을 하나의 큰 try 블록으로 묶어 에러 �
                     'Earned_Run': cols[17].get_text(strip=True), # 자책점
                     'WHIP': cols[18].get_text(strip=True),
                 }
+                # data dictionary의 내용을 player_data1 list에 넣는다.
                 player_data1.append(data)
 
             print(f"{team_name.upper()} Basic1 데이터 추출 완료. 현재까지 추출된 선수 수: {len(player_data1)}")
@@ -163,33 +185,42 @@ try: # 전체 크롤링 작업을 하나의 큰 try 블록으로 묶어 에러 �
         except Exception as e:
             print(f"Basic1.aspx 크롤링 중 오류 발생 ({team_name.upper()} 팀): {e}")
 
-    # player_data1 리스트를 DataFrame으로 변환
+    # player_data1 list를 DataFrame으로 변환
     if player_data1:
+        # player_data1 list를 pandas.DataFrame으로 변환하여 표 형태의 DataFrame으로 만든다.
         df1 = pd.DataFrame(player_data1)
+        # Player_Name와 Player_Team을 기준으로 중복된 행을 제거
+        # inplace=True : 원본 DataFrame을 직접 수정.
         df1.drop_duplicates(subset=['Player_Name', 'Player_Team'], inplace=True)
-        print(f"\n최종 df1 생성 완료. 행 수: {len(df1)}")
+        print(f"최종 df1 생성 완료. 행 수: {len(df1)}")
     else:
-        print("\nBasic1.aspx에서 저장할 데이터가 없습니다.")
-        df1 = pd.DataFrame() # 빈 DataFrame 생성
+        print("Basic1.aspx에서 저장할 데이터가 없습니다.")
+        # 빈 DataFrame 생성하여 merge 오류 방지.
+        df1 = pd.DataFrame() 
 
     # ==================== 데이터 타입 변환 및 CSV 저장 (df1만 사용) ====================
 
     if not df1.empty:
         print("\n--- 데이터 타입 변환 및 CSV 저장 시작 ---")
 
-        # Innings_Pitched 변환 함수
+        # 야구 투구 이닝 기록 문자열을 받아서, 이를 소수점 형태의 숫자(실수)로 변환해주는 함수
         def convert_innings_pitched(inning_str):
+            # 입력 값이 NaN이거나 빈 문자열일 경우
             if pd.isna(inning_str) or inning_str.strip() == '':
                 return None
             try:
+                # 공백 제거 (앞뒤 여백을 모두 제거해서 깔끔한 문자열로 만듦).
                 inning_str = inning_str.strip()
 
                 # 1. 정수 형태 (예: '11')
+                # 문자열에 분수 기호 /와 공백이 없으면
                 if '/' not in inning_str and ' ' not in inning_str:
                     return round(float(inning_str), 3)
 
-                # 2. 정수 + 분수 (예: '39 1/3')
+                # 분수 처리를 위해 문자열을 공백(' ') 기준으로 분리(split())해서 parts list를 만듦.
                 parts = inning_str.split()
+
+                # 2. 정수 + 분수 (예: '39 1/3')
                 if len(parts) == 2:
                     full = int(parts[0])
                     numerator, denominator = map(int, parts[1].split('/'))
@@ -202,11 +233,13 @@ try: # 전체 크롤링 작업을 하나의 큰 try 블록으로 묶어 에러 �
 
                 else:
                     return None
+                
             except Exception:
                 return None
 
         if 'Innings_Pitched' in df1.columns:
             df1['Innings_Pitched'] = df1['Innings_Pitched'].astype(str)
+            # apply()가 컬럼의 각 원소를 함수 인자로 넣어 호출하는 방식을 자동으로 처리하기 때문에, 호출할 때 인자를 따로 적지 않아도 문제없다.
             df1['Innings_Pitched'] = df1['Innings_Pitched'].apply(convert_innings_pitched)
 
         numeric_cols_float = [
@@ -219,18 +252,18 @@ try: # 전체 크롤링 작업을 하나의 큰 try 블록으로 묶어 에러 �
 
         for col in numeric_cols_float:
             if col in df1.columns:
-                df1[col] = pd.to_numeric(df1[col], errors='coerce')
+                 # errors='coerce' : '-' 등은 NaN으로
+                # .fillna(0) : NaN 값을 0으로 채움
+                # .astype(float) : 최종적으로 정수형(float) 으로 변환
+                df1[col] = pd.to_numeric(df1[col], errors='coerce').fillna(0).astype(float)
 
         for col in numeric_cols_int:
             if col in df1.columns:
+                # .astype(int) : 최종적으로 정수형(int) 으로 변환
                 df1[col] = pd.to_numeric(df1[col], errors='coerce').fillna(0).astype(int)
 
-        # Innings_Pitched는 convert_innings_pitched 함수에서 이미 float으로 변환되었으므로,
-        # 다시 pd.to_numeric을 호출할 필요는 없지만, 혹시 모를 경우를 대비해 유지할 수 있습니다.
-        # 다만, errors='coerce'를 사용하여 None 값을 NaN으로 변환하고, 필요에 따라 fillna(0) 등을 적용할 수 있습니다.
         if 'Innings_Pitched' in df1.columns:
-            df1['Innings_Pitched'] = pd.to_numeric(df1['Innings_Pitched'], errors='coerce')
-
+            df1['Innings_Pitched'] = pd.to_numeric(df1['Innings_Pitched'], errors='coerce').fillna(0).astype(float)
 
         print("데이터 타입 변환 완료.")
 
@@ -242,8 +275,7 @@ try: # 전체 크롤링 작업을 하나의 큰 try 블록으로 묶어 에러 �
             print(f"Game_Num이 0인 {deleted_rows}개의 선수 데이터가 삭제되었습니다.")
         else:
             print("Game_Num이 0인 선수 데이터가 없습니다.")
-
-
+        # df1 Dataframe의 맨 위 5개 행을 출력.
         print(df1.head())
         print(f"최종 처리된 데이터의 행 수: {len(df1)}, 컬럼 수: {len(df1.columns)}")
 
