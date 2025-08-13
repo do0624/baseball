@@ -42,7 +42,7 @@
 
 	<!-- 내가 추가한거 -->
 	<!-- mybatis - mapper 설정 -->
-	<mybatis-spring:scan base-package="com.peisia.mapper, com.baseball.ranking.mapper, com.baseball.game.mapper" />
+	<mybatis-spring:scan base-package="com.peisia.mapper, com.baseball.board.mapper, com.baseball.ranking.mapper, com.baseball.game.mapper" />
 		
 
 	<!-- 내가 추가한거 -->
