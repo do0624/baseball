@@ -1,4 +1,4 @@
-use cat;
+use my_cat;
 
 -- 게시판 테이블
 CREATE TABLE board (
