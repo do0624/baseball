@@ -1,7 +1,9 @@
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import MainPage from './pages/MainPage';
-import GamePage from './pages/GamePage';
+
+import HomePage from './pages/HomePage';
+import KboPage from './pages/KboPage';
+
 import './App.css';
 
 function App() {
@@ -9,8 +11,8 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<MainPage />} />
-          <Route path="/game" element={<GamePage />} />
+          <Route path="/" element={<HomePage />} />
+          <Route path="/KboPage" element={<KboPage />} />
         </Routes>
       </div>
     </Router>
