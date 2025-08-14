@@ -1,11 +1,14 @@
 use my_cat;
 
 # local_infile = 1로 하기 위해 필요한 세팅 : 
-# "https://velog.io/@s2econdblue/mysql-workbench%EC%97%90%EC%84%9C-csv-%EB%8D%B0%EC%9D%B4%ED%84%B0-import-%ED%95%98%EB%8A%94-%EB%B2%95"
+# 1. my.ini 파일에서 local_infile = 1을 추가해야 함.
+# 2. "https://velog.io/@s2econdblue/mysql-workbench%EC%97%90%EC%84%9C-csv-%EB%8D%B0%EC%9D%B4%ED%84%B0-import-%ED%95%98%EB%8A%94-%EB%B2%95" 을 보고 따라할 것.
 # LOAD DATA LOCAL INFILE 할 때, 파일 경로를 본인에 맞게 수정해야 한다.
 
-SHOW VARIABLES LIKE 'local_infile';
-select @@local_infile;
+SHOW VARIABLES LIKE 'local_infile'; # Value가 'ON' 이 되어야 한다
+select @@local_infile; #@@local_infile이 '1' 이 되어야 한다
+
+# => 위의 모든 세팅이 끝나야 LOAD DATA LOCAL INFILE 을 사용할 수 있다.
 
 ### 2024 스탯은 게임에, 2025 스탯은 웹에 사용할 것.
 

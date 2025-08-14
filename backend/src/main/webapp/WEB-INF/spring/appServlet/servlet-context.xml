@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:beans="http://www.springframework.org/schema/beans"
 	xmlns:context="http://www.springframework.org/schema/context"
@@ -31,6 +32,18 @@
 	<context:component-scan base-package="com.baseball.board" />
 	
 	<context:component-scan base-package="com.peisia.kbo_ranking" />
+	
+	<!-- CORS 설정 추가 -->
+	<mvc:cors><!-- mvc:cors와 같은 접두사를 사용하는 태그를 사용하려면 
+	xmlns:mvc="http://www.springframework.org/schema/mvc" 선언이 반드시 필요합니다. -->
+	
+	<!-- 모든 경로에 대해 CORS 허용 -->
+	<mvc:mapping path="/**"
+	allowed-origins="http://localhost:3000"
+	allowed-methods="GET, POST, PUT, DELETE"
+	allowed-headers="Content-Type, Authorization"
+	allow-credentials="true" />
+	</mvc:cors>
 	
 </beans:beans>
 
