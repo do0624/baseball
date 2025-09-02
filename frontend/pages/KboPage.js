@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { parseTeamHtmlToArray, parseHitterHtmlToArray, parsePitcherHtmlToArray, normalizeList } from '../utils/htmlTableParser';
 import '../styles/kboPage.css';
 
 const KboPage = () => {
@@ -22,19 +23,28 @@ const KboPage = () => {
     const fetchData = async () => {
       setLoading(true);
       try {
+        const normalizeAny = (data, type) => {
+          if (Array.isArray(data)) return data;
+          if (typeof data === 'string') {
+            if (type === 'team') return parseTeamHtmlToArray(data);
+            if (type === 'hitter') return parseHitterHtmlToArray(data);
+            if (type === 'pitcher') return parsePitcherHtmlToArray(data);
+          }
+          return normalizeList(data);
+        };
         if (selectedTab === 'team') {
-          const response = await axios.get('http://localhost:8080/kbo/team-stats');
-          if (isMounted) setTeamStats(response.data);
+          const response = await axios.get('/kbo/team-stats');
+          if (isMounted) setTeamStats(normalizeAny(response.data, 'team'));
         } else if (selectedTab === 'hitter' && selectedHitter === '타자') {
-          const response = await axios.get('http://localhost:8080/kbo/hitter-stats', {
+          const response = await axios.get('/kbo/hitter-stats', {
             params: { sortBy: hitterSortBy }
           });
-          if (isMounted) setHitterStats(response.data);
+          if (isMounted) setHitterStats(normalizeAny(response.data, 'hitter'));
         } else if (selectedTab === 'hitter' && selectedHitter === '투수') {
-          const response = await axios.get('http://localhost:8080/kbo/pitcher-stats', {
+          const response = await axios.get('/kbo/pitcher-stats', {
             params: { sortBy: pitcherSortBy }
           });
-          if (isMounted) setPitcherStats(response.data);
+          if (isMounted) setPitcherStats(normalizeAny(response.data, 'pitcher'));
         }
         if (isMounted) setError(null);
       } catch (err) {
@@ -91,7 +101,7 @@ const KboPage = () => {
         </thead>
 
         <tbody>
-            {teamStats.map((team, index) => (
+            {Array.isArray(teamStats) && teamStats.map((team, index) => (
                 <tr key={index}>
                     <td>{index + 1}</td>
                     <td>{team.teamName}</td>
@@ -138,7 +148,7 @@ const KboPage = () => {
               </tr>
             </thead>
             <tbody>
-              {hitterStats.map((hitter, index) => (
+              {Array.isArray(hitterStats) && hitterStats.map((hitter, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
                   <td>{hitter.playerName}</td>
@@ -188,7 +198,7 @@ const KboPage = () => {
               </tr>
             </thead>
             <tbody>
-              {pitcherStats.map((pitcher, index) => (
+              {Array.isArray(pitcherStats) && pitcherStats.map((pitcher, index) => (
                 <tr key={index}>
                   <td>{index + 1}</td>
                   <td>{pitcher.playerName}</td>

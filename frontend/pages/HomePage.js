@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios'; // Axios 임포트
 import '../styles/HomePage.css';
 import Slider from "react-slick";
+import { parseTeamHtmlToArray, parseHitterHtmlToArray, parsePitcherHtmlToArray, normalizeList } from '../utils/htmlTableParser';
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
@@ -14,27 +15,58 @@ const HomePage = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // HTML 응답(서버 렌더링 테이블)에서 팀 순위를 추출하는 파서
+    const parseTeamHtmlToArray = (htmlString) => {
+        try {
+            const parser = new DOMParser();
+            const doc = parser.parseFromString(htmlString, 'text/html');
+            const rows = doc.querySelectorAll('tbody tr');
+            const result = [];
+            rows.forEach((tr) => {
+                const tds = Array.from(tr.querySelectorAll('td')).map(td => td.textContent.trim());
+                if (tds.length >= 8) {
+                    result.push({
+                        teamName: tds[1],
+                        gameNum: Number(tds[2]),
+                        win: Number(tds[3]),
+                        lose: Number(tds[4]),
+                        draw: Number(tds[5]),
+                        winPercentage: tds[6],
+                        gamesBehind: tds[7]
+                    });
+                }
+            });
+            return result;
+        } catch (e) {
+            return [];
+        }
+    };
+
     // 컴포넌트 마운트 시 API 호출
     useEffect(() => {
         const fetchData = async () => {
             try {
                 // 타자 기록 (홈런 순)
                 // JSP 파일의 `<c:forEach>`에서 사용된 속성 이름과 일치하도록 `hitter.homeRun` 등을 사용
-                const hitterRes = await axios.get('http://localhost:8080/kbo/hitter-stats', {
+                const hitterRes = await axios.get('/kbo/hitter-stats', {
                     params: { sortBy: 'run' }
                 });
-                setHitterStats(hitterRes.data);
+                setHitterStats(Array.isArray(hitterRes.data) ? hitterRes.data : (typeof hitterRes.data === 'string' ? parseHitterHtmlToArray(hitterRes.data) : normalizeList(hitterRes.data)));
 
                 // 투수 기록 (승리 순)
                 // JSP 파일의 `<c:forEach>`에서 사용될 속성 이름과 일치하도록 `pitcher.win` 등을 사용
-                const pitcherRes = await axios.get('http://localhost:8080/kbo/pitcher-stats', {
+                const pitcherRes = await axios.get('/kbo/pitcher-stats', {
                     params: { sortBy: 'era' }
                 });
-                setPitcherStats(pitcherRes.data);
+                setPitcherStats(Array.isArray(pitcherRes.data) ? pitcherRes.data : (typeof pitcherRes.data === 'string' ? parsePitcherHtmlToArray(pitcherRes.data) : normalizeList(pitcherRes.data)));
 
                 // 팀 기록
-                const teamRes = await axios.get('http://localhost:8080/kbo/team-stats');
-                setTeamStats(teamRes.data);
+                const teamRes = await axios.get('/kbo/team-stats');
+                const rawTeam = teamRes.data;
+                const normalizedTeam = Array.isArray(rawTeam)
+                    ? rawTeam
+                    : (typeof rawTeam === 'string' ? parseTeamHtmlToArray(rawTeam) : normalizeList(rawTeam));
+                setTeamStats(normalizedTeam);
 
             } catch (err) {
                 setError("데이터를 불러오는 데 실패했습니다.");
