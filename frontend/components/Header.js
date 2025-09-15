@@ -28,22 +28,11 @@ const Header = ({ userId, setUserId }) => {
         <div className="header-nav-links">
           <Link to="/kboboard" className="header-nav-link">게시판</Link>
           <Link to="/kbo" className="header-nav-link">KBO</Link>
-          <Link to="/game/setup" className="header-nav-link">게임</Link>
+          <Link to="/game/game" className="header-nav-link">게임</Link>
         </div>
 
   {/* 오른쪽 유저 영역 */}
-  <div className="header-right">
-    {userId ? (
-      <>
-        <span className="header-user">안녕하세요, {userid}님</span>
-        <button onClick={handleLogout} className="logout-button">
-          로그아웃
-        </button>
-      </>
-    ) : (
-      <Link to="/login" className="header-nav-link">로그인</Link>
-    )}
-  </div>
+ 
 </nav>
     </header>
   );

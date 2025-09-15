@@ -1,7 +1,7 @@
 import React from 'react';
 import '../styles/Scoreboard22.css';
 
-const Scoreboard = ({ strike, ball, out, innings, bases }) => {
+const Scoreboard22 = ({ strike, ball, out, innings, bases }) => {
 
   const renderDots = (count, maxCount, type) => {
     return Array.from({ length: maxCount }).map((_, i) => (
@@ -9,7 +9,7 @@ const Scoreboard = ({ strike, ball, out, innings, bases }) => {
     ));
   };
 
-  // innings 객체 구조에 맞게 배열 분리
+  // innings 객체 구조에 맞게 배열 분리 (백엔드 데이터 구조에 맞게 수정)
   const home = innings?.my || [];
   const away = innings?.opponent || [];
 
@@ -17,12 +17,12 @@ const Scoreboard = ({ strike, ball, out, innings, bases }) => {
     <div className="scoreboard">
       {/* S/B/O 전광판 */}
       <div className="count-line">
-        <span className="count-label">S</span>
-        <div className="count-dots">{renderDots(strike, 2, 'strike')}</div>
-      </div>
-      <div className="count-line">
         <span className="count-label">B</span>
         <div className="count-dots">{renderDots(ball, 3, 'ball')}</div>
+      </div>
+      <div className="count-line">
+        <span className="count-label">S</span>
+        <div className="count-dots">{renderDots(strike, 2, 'strike')}</div>
       </div>
       <div className="count-line">
         <span className="count-label">O</span>
@@ -34,4 +34,4 @@ const Scoreboard = ({ strike, ball, out, innings, bases }) => {
   );
 };
 
-export default Scoreboard;
+export default Scoreboard22;

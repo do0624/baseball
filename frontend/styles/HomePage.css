@@ -1,154 +1,212 @@
-/* HomePage.css - Home page styles */
 .home-container {
-  background: linear-gradient(to right, #80ffe8, #caf3eb, #80ffe8);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-.image-container {
-  display: flex;
-  flex-direction: row;
-  gap: 100px;
-  justify-content: center;
-  align-items: flex-start;
+.header-content-banner {
+    background: linear-gradient(to right, #4a69bd, #5f74a9);
+    color: white;
+    padding: 40px 20px;
+    border-radius: 10px;
+    text-align: center;
+    width: 100%;
+    max-width: 1200px;
+    margin-bottom: 20px;
 }
 
-.team-ranking-row {
-  display: flex;
-  flex-direction: row;
-  gap: 100px;
-  justify-content: center;
-  align-items: flex-start;
-  margin-top: 2rem;
-  margin: 0 auto;
-  color: rgb(255, 131, 131);
-  max-width: 1200px;
-  width: 60%;
-  background-color: #ffffff;
-  padding: 4rem 0;
-  text-align: center;
-}
-.team-ranking {
-  flex: 1 1 0;
+.banner-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin: 0 0 10px;
 }
 
-.hero-section {
-  margin: 0 auto;
-  color: rgb(255, 131, 131);
-  max-width: 1200px;
-  width: 60%;
-  background-color: #2c3e50;
-  padding: 4rem 0;
-  text-align: center;
-}
-.schedule-section {
-  margin: 0 auto;
-  color: rgb(255, 131, 131);
-  max-width: 1200px;
-  width: 60%;
-  background-color: #85b3e0;
-  padding: 4rem 0;
-  text-align: center;
+.banner-subtitle {
+    font-size: 1rem;
+    opacity: 0.8;
+    margin-bottom: 20px;
 }
 
-.hero-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
+.banner-buttons .kbo-button {
+    background-color: rgba(255, 255, 255, 0.2);
+    border: 1px solid white;
+    color: white;
+    padding: 10px 20px;
+    margin: 0 5px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
 }
 
-.hero-title {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-  font-weight: bold;
-  color: rgb(255, 131, 131);
-
+.banner-buttons .kbo-button:hover {
+    background-color: rgba(255, 255, 255, 0.4);
 }
 
-.hero-subtitle {
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-  opacity: 0.9;
+.content-area {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 1200px; 
+    margin: 0 auto; 
+    gap: 20px; 
+}
+.logout-button{
+    border: 1px solid #ccc;
+    color: black;
 }
 
-.cta-button {
-  background: #e74c3c;
-  color: white;
-  border: none;
-  padding: 1rem 2rem;
-  font-size: 1.1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: all 0.3s ease;
+.main-left-section {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
 }
 
-.cta-button:hover {
-  background: #c0392b;
-  transform: translateY(-2px);
+.main-right-content-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    min-width: 0;
 }
 
-.features-section {
-  padding: 4rem 0;
-  background: #f8f9fa;
+.ranking-container, .login-container, .team-ranking-container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-.features-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
+.ranking-header, .login-header {
+    border-bottom: 2px solid #f0f0f0;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
 }
 
-.section-title {
-  text-align: center;
-  font-size: 2.5rem;
-  margin-bottom: 3rem;
-  color: #2c3e50;
+.login-header {
+    height : 20px;
 }
 
-.features-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
+.ranking-title, .login-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #333;
 }
 
-.feature-card {
-  background: white;
-  padding: 2rem;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  text-align: center;
-  transition: transform 0.3s ease;
+.ranking-slider-hitter {
+    margin-bottom: 30px;
 }
 
-.feature-card:hover {
-  transform: translateY(-5px);
+.ranking-box {
+    text-align: center;
 }
 
-.feature-card h3 {
-  color: #3498db;
-  margin-bottom: 1rem;
-  font-size: 1.5rem;
+.ranking-box h3 {
+    margin: 0 0 15px;
+    color: #4a69bd;
 }
 
-.feature-card p {
-  color: #7f8c8d;
-  line-height: 1.6;
+.ranking-box ol {
+    list-style: none;
+    padding: 0;
 }
 
-.icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+.ranking-box li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
 }
 
-
-.schedule-top-right {
-  position: absolute;
-  top: 70px;
-  right: 1%;
-  left: 82%;
-  z-index: 10;
+.rank-num {
+    font-weight: bold;
+    width: 25px;
+    text-align: left;
+    color: #666;
 }
 
+.stat {
+    font-weight: bold;
+    color: #4a69bd;
+}
 
+.login-container {
+    text-align: center;
+    background-color: #f0f4f9;
+}
 
+.login-container h3 {
+    color: #4a69bd;
+}
+
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 10px;
+}
+
+.login-form input {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.login-button {
+    padding: 12px;
+    background-color: #4a69bd;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s;
+}
+
+.login-button:hover {
+    background-color: #3b5090;
+}
+
+.team-ranking-container {
+    background-color: white;
+}
+
+.team-ranking-list {
+    list-style: none;
+    padding: 0;
+}
+
+.team-ranking-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 10px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.team-ranking-list li:last-child {
+    border-bottom: none;
+}
+
+.rank-number {
+    font-weight: bold;
+    width: 20px;
+    color: #333;
+}
+
+.team-name {
+    flex-grow: 1;
+    font-weight: bold;
+}
+
+.team-wins {
+    font-weight: bold;
+    color: #4a69bd;
+}

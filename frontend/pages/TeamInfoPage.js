@@ -1,80 +1,95 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { gameAPI } from '../api/api';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const teams = ['두산', 'LG', 'SSG', '키움', '한화', '롯데', '삼성', 'KT', 'KIA', 'NC'];
 
-const TeamSetupPage = () => {
-  const navigate = useNavigate();
-  const [inningCount, setInningCount] = useState(9);
-  const [userTeam, setUserTeam] = useState('');
-  const [cpuTeam, setCpuTeam] = useState('');
+const TeamInfoPage = () => {
+  const [selectedTeam, setSelectedTeam] = useState(teams[0]);
+  const [teamData, setTeamData] = useState(null);
 
-  const handleStart = async () => {
-    if (!userTeam || !cpuTeam) return alert('사용자 팀과 상대 팀을 모두 선택하세요.');
-    if (userTeam === cpuTeam) return alert('사용자 팀과 상대 팀은 달라야 합니다.');
+  useEffect(() => {
+    const fetchTeamData = async () => {
+      try {
+        const res = await axios.get(`/api/team/${selectedTeam}`);
+        setTeamData(res.data);
+      } catch (err) {
+        console.error(err);
+      }
+    };
+    fetchTeamData();
+  }, [selectedTeam]);
 
-    try {
-      const payload = {
-        homeTeam: userTeam,
-        awayTeam: cpuTeam,
-        maxInning: inningCount,
-        isUserOffense: true,
-        userId: localStorage.getItem("userId") || "guest"
-      };
-
-      const res = await gameAPI.createGame(payload);
-      const gameId = res.data.data.gameId;
-
-      navigate('/game/play', { 
-        state: { 
-          gameId, 
-          userTeam,       // 홈 팀
-          cpuTeam,        // 원정 팀
-          inningCount
-        } 
-      });
-
-    } catch (err) {
-      console.error('게임 생성 실패', err);
-      alert('게임 생성 실패: ' + (err.response?.data?.message || err.message));
-    }
-  };
+  if (!teamData) return <div>팀 데이터를 불러오는 중...</div>;
 
   return (
     <div style={{ padding: 20 }}>
-      <h2>팀 설정 & 이닝 선택</h2>
-      <div>
-        <label>
-          총 이닝:
-          <select value={inningCount} onChange={(e) => setInningCount(Number(e.target.value))}>
-            {Array.from({ length: 7 }, (_, i) => i + 3).map(num => (
-              <option key={num} value={num}>{num} 이닝</option>
-            ))}
-          </select>
-        </label>
-      </div>
-      <div>
-        <label>
-          사용자 팀:
-          <select value={userTeam} onChange={(e) => setUserTeam(e.target.value)}>
-            <option value="">선택</option>
-            {teams.map(t => <option key={t} value={t}>{t}</option>)}
-          </select>
-        </label>
-      </div>
-      <div>
-        <label>
-          상대 팀:
-          <select value={cpuTeam} onChange={(e) => setCpuTeam(e.target.value)}>
-            <option value="">선택</option>
-            {teams.filter(t => t !== userTeam).map(t => <option key={t} value={t}>{t}</option>)}
-          </select>
-        </label>
-      </div>
-      <button onClick={handleStart}>게임 시작</button>
+      <h1>KBO 팀 정보 🏟️</h1>
+
+      {/* 팀 선택 드롭다운 */}
+      <label>
+        팀 선택:&nbsp;
+        <select
+          value={selectedTeam}
+          onChange={e => setSelectedTeam(e.target.value)}
+          style={{ marginBottom: 20 }}
+        >
+          {teams.map(team => (
+            <option key={team} value={team}>{team}</option>
+          ))}
+        </select>
+      </label>
+
+      {/* 타자 테이블 */}
+      <h2>{teamData.teamId} 타자</h2>
+      <table border="1" cellPadding="6" style={{ borderCollapse: 'collapse', marginBottom: 30 }}>
+        <thead>
+          <tr>
+            <th>이름</th>
+            <th>타수</th>
+            <th>안타</th>
+            <th>홈런</th>
+            <th>타율</th>
+          </tr>
+        </thead>
+        <tbody>
+          {teamData.batters.map(b => (
+            <tr key={b.name}>
+              <td>{b.name}</td>
+              <td>{b.atBats}</td>
+              <td>{b.hits}</td>
+              <td>{b.homeRuns}</td>
+              <td>{b.battingAverage.toFixed(3)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+
+      {/* 투수 테이블 */}
+      <h2>{teamData.teamId} 투수</h2>
+      <table border="1" cellPadding="6" style={{ borderCollapse: 'collapse' }}>
+        <thead>
+          <tr>
+            <th>이름</th>
+            <th>이닝</th>
+            <th>삼진</th>
+            <th>볼넷</th>
+            <th>ERA</th>
+          </tr>
+        </thead>
+        <tbody>
+          {teamData.pitchers.map(p => (
+            <tr key={p.name}>
+              <td>{p.name}</td>
+              <td>{p.inningsPitched}</td>
+              <td>{p.strikeouts}</td>
+              <td>{p.walks}</td>
+              <td>{p.era.toFixed(2)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
 
-export default TeamSetupPage;
+export default TeamInfoPage;

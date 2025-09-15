@@ -34,4 +34,4 @@
 /* S/B/O 색상 및 ON 상태 */
 .count-dot.strike.on { background-color: red; }
 .count-dot.ball.on { background-color: blue; }
-.count-dot.out.on { background-color: black; }
+.count-dot.out.on { background-color: rgb(0, 0, 0); }

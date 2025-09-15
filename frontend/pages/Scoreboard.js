@@ -1,77 +1,115 @@
-import React, { useEffect, useState } from "react";
-import api from "../api/api";
+// Scoreboard.js
+import React, { useMemo } from "react";
 
-const Scoreboard = ({ gameState, homeTeam = "홈 팀", awayTeam = "원정 팀" }) => {
-  const [homePitcher, setHomePitcher] = useState("");
-  const [homeBatter, setHomeBatter] = useState("");
-  const [awayPitcher, setAwayPitcher] = useState("");
-  const [awayBatter, setAwayBatter] = useState("");
+const Scoreboard = ({ gameState, homeTeam, awayTeam, lineups, inningCount }) => {
+  const totalInnings = inningCount || 9;
 
-  const inningCount = gameState?.score?.my?.length || 9;
+  // ===== eventLog 기반 이닝별 점수 계산 (PA_END + GAME_END) =====
+  const { homeScore, awayScore } = useMemo(() => {
+    const homeScore = Array(totalInnings).fill(0);
+    const awayScore = Array(totalInnings).fill(0);
 
-  // ---------------- 선수 이름 가져오기 ----------------
-  useEffect(() => {
-    if (!gameState?.gameId) return;
+    let lastHomeTotal = 0;
+    let lastAwayTotal = 0;
 
-    const fetchNames = async () => {
-      try {
-        const res = await api.get(`/game/${gameState.gameId}/names`);
-        setHomePitcher(res.data.homePitcher || "");
-        setHomeBatter(res.data.homeBatter || "");
-        setAwayPitcher(res.data.awayPitcher || "");
-        setAwayBatter(res.data.awayBatter || "");
-      } catch (err) {
-        console.error("선수 이름 불러오기 실패:", err);
+    gameState.eventLog?.forEach(ev => {
+      if (ev.type !== "PA_END" && ev.type !== "GAME_END") return;
+      const inningIdx = ev.inning - 1;
+
+      if (ev.top) {
+        const increment = (ev.awayScore ?? lastAwayTotal) - lastAwayTotal;
+        awayScore[inningIdx] += increment;
+        lastAwayTotal = ev.awayScore ?? lastAwayTotal;
+      } else {
+        const increment = (ev.homeScore ?? lastHomeTotal) - lastHomeTotal;
+        homeScore[inningIdx] += increment;
+        lastHomeTotal = ev.homeScore ?? lastHomeTotal;
       }
-    };
+    });
 
-    fetchNames();
-  }, [gameState?.gameId]);
+    return { homeScore, awayScore };
+  }, [gameState.eventLog, totalInnings]);
 
-  // ---------------- 점수 배열 초기화 ----------------
-  const homeScore = gameState?.score?.my ? [...gameState.score.my] : Array(inningCount).fill(0);
-  const awayScore = gameState?.score?.opponent ? [...gameState.score.opponent] : Array(inningCount).fill(0);
+  const isTop = (() => {
+    const val = gameState?.isTop ?? gameState?.top ?? gameState?.offenseSide;
+    if (typeof val === "boolean") return val;
+    if (typeof val === "number") return val === 0;
+    return String(val).toUpperCase() === "TOP";
+  })();
 
-  while (homeScore.length < inningCount) homeScore.push(0);
-  while (awayScore.length < inningCount) awayScore.push(0);
+  const homeTeamName = lineups?.home?.teamName || homeTeam || gameState?.homeTeam || "홈 팀";
+  const awayTeamName = lineups?.away?.teamName || awayTeam || gameState?.awayTeam || "원정 팀";
 
-  const inning = gameState?.inning || 1;
-  const isTop = gameState?.isTop ?? true;
+  const homeBattingOrder = lineups?.home?.battingOrder?.map(p => p.name || p.Player_Name || p) || [];
+  const awayBattingOrder = lineups?.away?.battingOrder?.map(p => p.name || p.Player_Name || p) || [];
 
+  const homeBatterIndex = gameState?.homeBatterIndex ?? 0;
+  const awayBatterIndex = gameState?.awayBatterIndex ?? 0;
+  const currentPitcher = gameState?.currentPitcher;
+  const currentBatter = gameState?.currentBatter;
+
+  const getPlayer = (current, teamName) =>
+    current?.team === teamName.split(" ")[0] ? current.name : "-";
+
+  const homePitcher = getPlayer(currentPitcher, homeTeamName) || lineups?.home?.pitcher || "-";
+  const awayPitcher = getPlayer(currentPitcher, awayTeamName) || lineups?.away?.pitcher || "-";
+  const homeBatter = getPlayer(currentBatter, homeTeamName) || homeBattingOrder[homeBatterIndex] || "-";
+  const awayBatter = getPlayer(currentBatter, awayTeamName) || awayBattingOrder[awayBatterIndex] || "-";
+
+  // ===== 테이블 표시 =====
   return (
-    <div>
-      <table border="1" cellPadding="10" style={{ width: "100%" }}>
+    <div style={{ overflowX: "auto" }}>
+      <table border="1" cellPadding="10" style={{ width: "100%", textAlign: "center", borderCollapse: "collapse" }}>
         <thead>
           <tr>
-            <th>이닝</th>
-            {Array.from({ length: inningCount }).map((_, i) => <th key={i}>{i + 1}</th>)}
-            <th>합계</th>
+            <th>Team</th>
+            {Array.from({ length: totalInnings }).map((_, i) => <th key={i}>{i + 1}</th>)}
+            <th>R</th><th>H</th><th>K</th><th>BB</th>
           </tr>
         </thead>
         <tbody>
+          {/* 원정팀 */}
           <tr>
-            <td>{homeTeam}</td>
-            {homeScore.map((s, i) => <td key={i}>{s}</td>)}
-            <td>{homeScore.reduce((a, b) => a + b, 0)}</td>
-          </tr>
-          <tr>
-            <td>{awayTeam}</td>
+            <td>{awayTeamName}</td>
             {awayScore.map((s, i) => <td key={i}>{s}</td>)}
-            <td>{awayScore.reduce((a, b) => a + b, 0)}</td>
+            <td style={{ fontWeight: "bold" }}>{awayScore.reduce((a, b) => a + b, 0)}</td>
+            <td style={{ fontWeight: "bold" }}>{gameState?.awayHit ?? 0}</td>
+            <td style={{ fontWeight: "bold" }}>{gameState?.pitcherGameStats?.strikeouts ?? 0}</td>
+            <td style={{ fontWeight: "bold" }}>{gameState?.awayWalks ?? 0}</td>
           </tr>
+
+          {/* 홈팀 */}
           <tr>
-            <td colSpan={inningCount + 2}>
-              홈팀 {isTop ? `투수: ${homePitcher || "-"}` : `타자: ${homeBatter || "-"}`}
+            <td>{homeTeamName}</td>
+            {homeScore.map((s, i) => <td key={i}>{s}</td>)}
+            <td style={{ fontWeight: "bold" }}>{homeScore.reduce((a, b) => a + b, 0)}</td>
+            <td style={{ fontWeight: "bold" }}>{gameState?.homeHit ?? 0}</td>
+            <td style={{ fontWeight: "bold" }}>{gameState?.pitcherGameStats?.strikeouts ?? 0}</td>
+            <td style={{ fontWeight: "bold" }}>{gameState?.homeWalks ?? 0}</td>
+          </tr>
+
+          {/* 원정팀 라인업/투수 */}
+          <tr>
+            <td colSpan={totalInnings + 5} style={{ backgroundColor: "#fff0e0" }}>
+              {isTop
+                ? `${awayTeamName} - 타자: ${awayBatter}`
+                : `${awayTeamName} - 투수: ${awayPitcher}`}
             </td>
           </tr>
+
+          {/* 홈팀 라인업/투수 */}
           <tr>
-            <td colSpan={inningCount + 2}>
-              원정팀 {isTop ? `타자: ${awayBatter || "-"}` : `투수: ${awayPitcher || "-"}`}
+            <td colSpan={totalInnings + 5} style={{ backgroundColor: "#e0f0ff" }}>
+              {isTop
+                ? `${homeTeamName} - 투수: ${homePitcher}`
+                : `${homeTeamName} - 타자: ${homeBatter}`}
             </td>
           </tr>
+
+          {/* 현재 이닝 */}
           <tr>
-            <td colSpan={inningCount + 2}>
-              이닝: {inning}회 {isTop ? "초" : "말"}
+            <td colSpan={totalInnings + 5} style={{ fontWeight: "bold" }}>
+              {gameState.inning}회 {isTop ? "초" : "말"}
             </td>
           </tr>
         </tbody>
